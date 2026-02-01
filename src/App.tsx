@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  FileText, 
-  Send, 
-  Download, 
-  Database, 
-  BrainCircuit, 
-  Cpu, 
-  Wrench, 
-  Truck, 
-  HardHat, 
-  ShieldAlert,
+import React, { useState } from 'react';
+import {
+  FileText,
+  Download,
+  Database,
+  BrainCircuit,
+  Cpu,
+  Wrench,
+  Truck,
+  HardHat,
   Save,
-  Clock,
   CheckCircle,
   FileCheck
 } from 'lucide-react';
