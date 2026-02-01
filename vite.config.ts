@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  base: '/pand-erp-feedback/', // 這裡要跟您的 repo 名稱一樣
+  plugins: [react(), tailwindcss()],
+  base: '/pand-erp-feedback/',
 })
