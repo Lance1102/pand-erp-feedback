@@ -12,6 +12,7 @@ import {
   CheckCircle,
   FileCheck,
   ChevronRight,
+  ExternalLink,
 } from 'lucide-react';
 
 // 定義規劃書中的核心模組數據
@@ -216,6 +217,27 @@ ${feedbackContent}
 
           {/* Left: Module Selection */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Report Link */}
+            <a
+              href={`${import.meta.env.BASE_URL}ERP-MES-requirement-report.pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200/60 hover:border-indigo-300 hover:shadow-md transition-all group"
+            >
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 group-hover:bg-indigo-200 transition-colors">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-indigo-900">
+                  ERP / MES 建構需求規劃書 - 全域整合架構與功能細節深度研究報告
+                </p>
+                <p className="text-xs text-indigo-500 mt-0.5">
+                  點擊開啟完整報告 (PDF)
+                </p>
+              </div>
+              <ExternalLink className="w-4 h-4 text-indigo-400 group-hover:text-indigo-600 flex-shrink-0 transition-colors" />
+            </a>
+
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-200">
                 <BrainCircuit className="w-4 h-4 text-slate-600" />
