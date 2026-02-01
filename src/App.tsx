@@ -169,8 +169,8 @@ ${feedbackContent}
           <div className="flex items-center gap-3">
             <Database className="w-8 h-8 text-blue-400" />
             <div>
-              <h1 className="text-xl font-bold tracking-wide">磐德國際 ERP 建構規畫意見平台</h1>
-              <p className="text-xs text-slate-400">基於：全域整合架構與功能細節深度研究報告 (Ref: 9b8a1d73)</p>
+              <h1 className="text-xl font-bold tracking-wide">磐德國際ERP系統建置專案動態回饋系統</h1>
+              <p className="text-xs text-slate-400">本系統存在週期僅於規劃需求階段</p>
             </div>
           </div>
           <div className="text-sm bg-slate-800 px-3 py-1 rounded border border-slate-700">
