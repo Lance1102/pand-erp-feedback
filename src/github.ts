@@ -37,14 +37,11 @@ export async function commitFeedbackFile(
     );
 
     if (res.ok) {
-      return { success: true, message: '已同步至 Git 儲存庫' };
+      return { success: true, message: '已同步發送到規劃師' };
     }
 
-    const err = await res.json().catch(() => ({}));
-    const detail = (err as Record<string, string>).message || res.statusText;
-    return { success: false, message: `Git 同步失敗: ${detail}` };
+    return { success: false, message: '發送失敗(系統問題)，請將下載檔案手動傳給規劃師' };
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    return { success: false, message: `網路錯誤: ${msg}` };
+    return { success: false, message: '發送失敗(系統問題)，請將下載檔案手動傳給規劃師' };
   }
 }
