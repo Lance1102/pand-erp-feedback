@@ -13,7 +13,11 @@ import {
   FileCheck,
   ChevronRight,
   ExternalLink,
+  AlertCircle,
+  CloudUpload,
+  Loader2,
 } from 'lucide-react';
+import { commitFeedbackFile, isGitHubEnabled } from './github';
 
 // 定義規劃書中的核心模組數據
 // 內容嚴格參照文件 9b8a1d73-95e4-4bbe-9b69-a035a4080e60
@@ -117,6 +121,8 @@ export default function PandFeedbackSystem() {
   const [feedbackContent, setFeedbackContent] = useState('');
   const [generatedFiles, setGeneratedFiles] = useState<FileRecord[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [commitStatus, setCommitStatus] = useState<{ ok: boolean; msg: string } | null>(null);
 
   const getFormattedTimestamp = () => {
     const now = new Date();
@@ -131,9 +137,12 @@ export default function PandFeedbackSystem() {
     };
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedModule) return;
+    if (!selectedModule || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setCommitStatus(null);
 
     const ts = getFormattedTimestamp();
     const filename = `${ts.date}_${ts.time}_${selectedModule.name.replace(/\s+/g, '')}.txt`;
@@ -167,9 +176,17 @@ ${feedbackContent}
     setGeneratedFiles([newFile, ...generatedFiles]);
     downloadFile(filename, fileContent);
 
+    // Commit to GitHub repo
+    const result = await commitFeedbackFile(filename, fileContent);
+    setCommitStatus({ ok: result.success, msg: result.message });
+
     setShowSuccess(true);
     setFeedbackContent('');
-    setTimeout(() => setShowSuccess(false), 3000);
+    setIsSubmitting(false);
+    setTimeout(() => {
+      setShowSuccess(false);
+      setCommitStatus(null);
+    }, 5000);
   };
 
   const downloadFile = (filename: string, content: string) => {
@@ -368,17 +385,48 @@ ${feedbackContent}
 
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-400 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed"
                   >
-                    <Save className="w-5 h-5" />
-                    提交並生成檔案
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        提交中...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-5 h-5" />
+                        提交並生成檔案
+                      </>
+                    )}
                   </button>
 
                   {showSuccess && (
-                    <div className="bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 p-3 rounded-xl text-sm flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                      意見已提交，檔案自動下載中...
+                    <div className="space-y-2">
+                      <div className="bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 p-3 rounded-xl text-sm flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                        意見已提交，檔案自動下載中...
+                      </div>
+                      {commitStatus && (
+                        <div className={`p-3 rounded-xl text-sm flex items-center gap-2 ${
+                          commitStatus.ok
+                            ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200'
+                            : 'bg-amber-50 text-amber-700 ring-1 ring-amber-200'
+                        }`}>
+                          {commitStatus.ok
+                            ? <CloudUpload className="w-4 h-4 flex-shrink-0" />
+                            : <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                          }
+                          {commitStatus.msg}
+                        </div>
+                      )}
                     </div>
+                  )}
+
+                  {isGitHubEnabled() && !showSuccess && (
+                    <p className="text-xs text-slate-400 text-center">
+                      提交後將同步儲存至 Git 儲存庫
+                    </p>
                   )}
                 </form>
               ) : (
