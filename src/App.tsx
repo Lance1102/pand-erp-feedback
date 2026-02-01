@@ -129,10 +129,11 @@ export default function PandFeedbackSystem() {
     const yyyy = now.getFullYear();
     const mm = String(now.getMonth() + 1).padStart(2, '0');
     const dd = String(now.getDate()).padStart(2, '0');
-    const time = now.toTimeString().split(' ')[0].replace(/:/g, '');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
     return {
       date: `${yyyy}-${mm}-${dd}`,
-      time: time,
+      time: `${hh}-${min}`,
       full: now.toLocaleString('zh-TW', { hour12: false }),
     };
   };
@@ -145,7 +146,8 @@ export default function PandFeedbackSystem() {
     setCommitStatus(null);
 
     const ts = getFormattedTimestamp();
-    const filename = `${ts.date}_${ts.time}_${selectedModule.name.replace(/\s+/g, '')}.txt`;
+    const reviewer = reviewerName.trim() || '匿名';
+    const filename = `${ts.date}_${ts.time}_${selectedModule.name.replace(/\s+/g, '')}_${reviewer.replace(/\s+/g, '')}_${feedbackType}.txt`;
 
     const fileContent = `
 【磐德國際 ERP 建構需求規畫書 - 意見反饋單】
