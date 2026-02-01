@@ -114,6 +114,16 @@ const BORDER_ACTIVE: Record<string, string> = {
   orange: 'border-orange-500 ring-orange-200',
 };
 
+/** Remove filesystem-illegal chars, collapse whitespace, cap length. */
+function sanitizeForFilename(raw: string): string {
+  return raw
+    .trim()
+    .replace(/[\\/:*?"<>|#%&{}$!@`=+^~\n\r\t]/g, '')  // illegal / risky chars
+    .replace(/\.{2,}/g, '')                              // prevent path traversal
+    .replace(/\s+/g, '')                                 // remove all whitespace
+    .slice(0, 30);                                       // cap length
+}
+
 export default function PandFeedbackSystem() {
   const [selectedModule, setSelectedModule] = useState<typeof MODULES[0] | null>(null);
   const [reviewerName, setReviewerName] = useState('');
@@ -146,8 +156,8 @@ export default function PandFeedbackSystem() {
     setCommitStatus(null);
 
     const ts = getFormattedTimestamp();
-    const reviewer = reviewerName.trim() || '匿名';
-    const filename = `${ts.date}_${ts.time}_${selectedModule.name.replace(/\s+/g, '')}_${reviewer.replace(/\s+/g, '')}_${feedbackType}.txt`;
+    const reviewer = sanitizeForFilename(reviewerName) || '匿名';
+    const filename = `${ts.date}_${ts.time}_${selectedModule.name.replace(/\s+/g, '')}_${reviewer}_${feedbackType}.txt`;
 
     const fileContent = `
 【磐德國際 ERP 建構需求規畫書 - 意見反饋單】
